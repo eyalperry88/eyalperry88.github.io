@@ -5,8 +5,12 @@
   <meta charset="utf-8">
   <title>openSleep</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <script src="js/multithread.js"></script>
+  <script src="js/d3.v4.min.js"></script>
+  <script src="js/hr.js"></script>
+  <script src="js/script.js"></script>
 </head>
 <body>
   <div id="title">openSleep</div>
@@ -15,6 +19,52 @@
   <input type="button" value="Start Notifications" id="startNotifications">
   <input type="button" value="Stop Notification" id="stopNotifications">
   <input type="button" value="Reset" id="reset">
-  <script src="script.js"></script>
+  <div id="user">
+    <div id="user-first-name" class="user-elem">
+      <div class="user-label">First Name</div>
+      <input type="text" name="first_name" id="first-name">
+    </div>
+    <div id="user-last-name" class="user-elem">
+      <div class="user-label">Last Name</div>
+      <input type="text" name="last_name" id="last-name">
+    </div>
+    <div id="user-age" class="user-elem">
+      <div class="user-label">Age</div>
+      <input type="text" name="age" id="age">
+    </div>
+    <div id="user-gender" class="user-elem">
+      <div class="user-label">Gender</div>
+      <select id="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="undefined" selected>Undefined</option>
+      </select>
+    </div>
+    <div id="user-file" class="user-elem">
+      <div class="user-label">File Name</div>
+      <input type="text" name="file" id="file">
+    </div>
+  </div>
+  <div id="channels">
+    <div id="channel-bpm" class="channel">
+      <div class="channel-name">BPM</div>
+      <div id="bpm" class="channel-value">0</div>
+    </div>
+    <div id="channel-flex" class="channel">
+      <div class="channel-name">Flex</div>
+      <div id="flex" class="channel-value">0</div>
+    </div>
+    <div id="channel-eda" class="channel">
+      <div class="channel-name">EDA</div>
+      <div id="eda" class="channel-value">0</div>
+    </div>
+  </div>
+  <svg width="1200" height="500" id="plot"></svg>
+  <div id="buttons">
+    <input type="submit" value="Start Session" id="record">
+    <input type="submit" value="Calibrating..." id="calibrate">
+    <input type="submit" value="Wakeup" id="wakeup">
+  </div>
+
 </body>
 </html>
