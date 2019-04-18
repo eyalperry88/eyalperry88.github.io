@@ -2,11 +2,11 @@ log = console.log
 
 function isWebBluetoothEnabled() {
   if (navigator.bluetooth) {
+    $("#bluetooth_help").hide();
     return true;
   } else {
-    window.alert('Web Bluetooth API is not available.\n' +
-        'Please make sure the "Experimental Web Platform features" flag is enabled.\n' +
-      'and access the website using HTTPS');
+    window.alert('Web Bluetooth API is not available. (only availble in Chrome)\n');
+    $("#bluetooth_help").show();
     return false;
   }
 }
@@ -67,6 +67,50 @@ function connectDeviceAndCacheCharacteristics() {
 function handleBatteryLevelChanged(event) {
   let val = event.target.value.getUint8(0);
   log('> ' + val);
+
+  //newData = new Uint32Array(data);
+  oldHr = hr ;
+  flex = val + 0 + Math.floor(Math.random() * 10); //newData[0];
+  hr = val + 100 + Math.floor(Math.random() * 10); //newData[1];
+  eda = val + 200 + Math.floor(Math.random() * 10); //newData[2];
+  buffer.push(hr);
+  if (buffer.length > 600) {
+    buffer.shift();
+  }
+  bigBuffer.push(newData)
+  if (bigBuffer.length > 1800) {
+    bigBuffer.shift();
+  }
+  if (calibrationStatus == "CALIBRATING" && meanEDA != null) {
+    $('#flex').text(flex + " (" + meanFlex + ")");
+    $('#eda').text(eda + " (" + meanEDA + ")");
+  } else if (calibrationStatus == "CALIBRATED") {
+    $('#flex').text(flex + " (" + addSign(flex, meanFlex) + ")");
+    $('#eda').text(eda + " (" + addSign(eda, meanEDA) + ")");
+  } else {
+    $('#flex').text(flex);
+    $('#eda').text(eda);
+  }
+
+  if(hr - oldHr > thresh && now - lastBeat > .4){
+    document.getElementById("channel-bpm").style.background = 'rgba(255,0,0,0.8)';
+    lastBeat = new Date().getTime()/1000;
+  } else {
+    document.getElementById("channel-bpm").style.background = 'rgba(255,0,0,0.1)';
+  }
+  now = new Date().getTime()/1000;
+  if (!bpmInit) {
+    if(now - prev >= 20) {
+      MT.process(processBPM, setBPM)(buffer, thresh);
+      prev = now;
+      bpmInit = true;
+    }
+  } else {
+    if(now - prev >= 1) {
+      MT.process(processBPM, setBPM)(buffer, thresh);
+      prev = now;
+    }
+  }
 }
 
 function onResetButtonClick() {
@@ -122,52 +166,6 @@ function addSign(x, mean) {
   }
 }
 
-socket.on('data', function (data) {
-    newData = new Uint32Array(data);
-    oldHr = hr ;
-    flex = newData[0];
-    hr = newData[1];
-    eda = newData[2];
-    buffer.push(hr);
-    if (buffer.length > 600) {
-      buffer.shift();
-    }
-    bigBuffer.push(newData)
-    if (bigBuffer.length > 1800) {
-      bigBuffer.shift();
-    }
-    if (calibrationStatus == "CALIBRATING" && meanEDA != null) {
-      $('#flex').text(flex + " (" + meanFlex + ")");
-      $('#eda').text(eda + " (" + meanEDA + ")");
-    } else if (calibrationStatus == "CALIBRATED") {
-      $('#flex').text(flex + " (" + addSign(flex, meanFlex) + ")");
-      $('#eda').text(eda + " (" + addSign(eda, meanEDA) + ")");
-    } else {
-      $('#flex').text(flex);
-      $('#eda').text(eda);
-    }
-
-    if(hr - oldHr > thresh && now - lastBeat > .4){
-      document.getElementById("channel-bpm").style.background = 'rgba(255,0,0,0.8)';
-      lastBeat = new Date().getTime()/1000;
-    } else {
-      document.getElementById("channel-bpm").style.background = 'rgba(255,0,0,0.1)';
-    }
-    now = new Date().getTime()/1000;
-    if (!bpmInit) {
-      if(now - prev >= 20) {
-        MT.process(processBPM, setBPM)(buffer, thresh);
-  	    prev = now;
-        bpmInit = true;
-  	  }
-    } else {
-      if(now - prev >= 1) {
-        MT.process(processBPM, setBPM)(buffer, thresh);
-        prev = now;
-  	  }
-    }
-});
-
 function setBPM(_bpm) {
   if (calibrationStatus == "CALIBRATING" && meanHR != null) {
     $('#bpm').text(_bpm + " (" + meanHR + ")");
@@ -186,7 +184,7 @@ var calibrateTimer = null;
 var countdown = 0;
 var countdownTimer = null;
 function startCalibrating() {
-  socket.emit("event", "calibrate_start");
+  //socket.emit("event", "calibrate_start");
 
   bigBuffer = [];
   bpmBuffer = [];
@@ -237,7 +235,7 @@ function updateMeans() {
 function endCalibrating() {
   updateMeans();
 
-  socket.emit("event", "calibrate_end," + meanFlex + "," + meanHR + "," + meanEDA);
+  //socket.emit("event", "calibrate_end," + meanFlex + "," + meanHR + "," + meanEDA);
 
   calibrationStatus = "CALIBRATED"
 
@@ -254,17 +252,23 @@ function endCalibrating() {
 }
 
 var recording = false;
+var isConnected = false;
 $(function(){
+  $("#bluetooth_help").hide()
+  $("#session_buttons").hide()
 
   document.querySelector('#connect').addEventListener('click', function() {
     if (isWebBluetoothEnabled()) {
-      onReadBatteryLevelButtonClick();
-    }
-  });
-
-  document.querySelector('#reset').addEventListener('click', function(event) {
-    if (isWebBluetoothEnabled()) {
-      onResetButtonClick();
+      if (isConnected) {
+        onResetButtonClick();
+        $('#connect').value("Connect")
+        $("#session_buttons").hide()
+      } else {
+        onReadBatteryLevelButtonClick();
+        $('#connect').value("Reset")
+        $("#session_buttons").show()
+      }
+      isConnected = !isConnected
     }
   });
 
@@ -280,12 +284,6 @@ $(function(){
   $("#record").click(function(){
     recording = !recording;
     if (recording) {
-
-      if ($.trim($("#file").val()) == '') {
-        alert('Have to specify file name!');
-        recording = !recording;
-        return;
-      }
 
       document.getElementById("record").value = "Stop Session";
       document.getElementById("record").style.backgroundColor = "rgba(255, 0, 0, .4)";
@@ -315,8 +313,8 @@ $(function(){
         clearTimeout(countdownTimer)
       }
 
-      window.open('/?file=' + $("#file").val(), "_blank")
-      $("#file").val($("#file").val() + ".1")
+      //window.open('/?file=' + $("#file").val(), "_blank")
+      //$("#file").val($("#file").val() + ".1")
     }
     var firstName = document.getElementById("first-name").value;
     var lastName = document.getElementById("last-name").value;
@@ -331,7 +329,7 @@ $(function(){
       'gender': gender,
       'file': file,
     }
-    socket.emit("user", data);
+    //socket.emit("user", data);
   });
 
       //....
@@ -427,7 +425,7 @@ $(function(){
       .ease(d3.easeLinear)
       .attr("x1",-1)
       .attr("x2",-1);
-    socket.emit("event", "wakeup");
+    //socket.emit("event", "wakeup");
   })
 
   function tick() {
@@ -464,6 +462,6 @@ document.addEventListener('keydown', function (event) {
   var key = event.key || event.keyCode;
 
   if (key === '`' || key === 'Backquote' || key === 192) {
-    socket.emit("simulate");
+    //socket.emit("simulate");
   }
 });

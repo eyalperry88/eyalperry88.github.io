@@ -195,3 +195,7 @@ select {
   float: right;
   margin: 10px 0px 0px 20px;
 }
+
+#bluetooth_help {
+  padding: 5px;
+}
