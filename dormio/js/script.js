@@ -291,7 +291,6 @@ $(function(){
       document.getElementById("last-name").disabled = true;
       document.getElementById("age").disabled = true;
       document.getElementById("gender").disabled = true;
-      document.getElementById("file").disabled = true;
 
       $("#calibrate").show()
       startCalibrating()
@@ -303,7 +302,6 @@ $(function(){
       document.getElementById("last-name").disabled = false;
       document.getElementById("age").disabled = false;
       document.getElementById("gender").disabled = false;
-      document.getElementById("file").disabled = false;
 
       $("#calibrate").hide()
       if (calibrateTimer) {
@@ -320,14 +318,12 @@ $(function(){
     var lastName = document.getElementById("last-name").value;
     var age = document.getElementById("age").value;
     var gender = document.getElementById("gender").value;
-    var file = document.getElementById("file").value;
     data = {
       'recording': recording ? "start" : "stop",
       'firstName': firstName,
       'secondName': lastName,
       'age': age,
       'gender': gender,
-      'file': file,
     }
     //socket.emit("user", data);
   });
