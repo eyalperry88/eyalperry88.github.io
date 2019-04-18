@@ -5,7 +5,7 @@ function isWebBluetoothEnabled() {
     $("#bluetooth_help").hide();
     return true;
   } else {
-    window.alert('Web Bluetooth API is not available. (only availble in Chrome)\n');
+    window.alert('Web Bluetooth API is not available (only available in Chrome)\n');
     $("#bluetooth_help").show();
     return false;
   }
@@ -81,6 +81,9 @@ function handleBatteryLevelChanged(event) {
   if (bigBuffer.length > 1800) {
     bigBuffer.shift();
   }
+  if (recording) {
+    fileOutput += flex + "," + hr + "," + eda + "|"
+  }
   if (calibrationStatus == "CALIBRATING" && meanEDA != null) {
     $('#flex').text(flex + " (" + meanFlex + ")");
     $('#eda').text(eda + " (" + meanEDA + ")");
@@ -147,6 +150,7 @@ var buffer = [];
 var bigBuffer = [];
 var bpmBuffer = [];
 var bpmInit = false;
+var fileOutput = "";
 
 var meanEDA = null;
 var meanFlex = null;
@@ -184,7 +188,9 @@ var calibrateTimer = null;
 var countdown = 0;
 var countdownTimer = null;
 function startCalibrating() {
-  //socket.emit("event", "calibrate_start");
+  if (recording) {
+    fileOutput += "EVENT,calibrate_start|"
+  }
 
   bigBuffer = [];
   bpmBuffer = [];
@@ -235,7 +241,9 @@ function updateMeans() {
 function endCalibrating() {
   updateMeans();
 
-  //socket.emit("event", "calibrate_end," + meanFlex + "," + meanHR + "," + meanEDA);
+  if (recording) {
+    fileOutput += "EVENT,calibrate_end," + meanFlex + "," + meanHR + "," + meanEDA + "|"
+  }
 
   calibrationStatus = "CALIBRATED"
 
@@ -252,7 +260,7 @@ function endCalibrating() {
 }
 
 var recording = false;
-var isConnected = false;
+var inSession = false;
 $(function(){
   $("#bluetooth_help").hide()
   $("#session_buttons").hide()
@@ -261,11 +269,11 @@ $(function(){
     if (isWebBluetoothEnabled()) {
       if (isConnected) {
         onResetButtonClick();
-        $('#connect').value("Connect")
+        $('#connect').val("Connect")
         $("#session_buttons").hide()
       } else {
         onReadBatteryLevelButtonClick();
-        $('#connect').value("Reset")
+        $('#connect').val("Reset")
         $("#session_buttons").show()
       }
       isConnected = !isConnected
@@ -285,23 +293,42 @@ $(function(){
     recording = !recording;
     if (recording) {
 
+      if ($.trim($("#file").val()) == '') {
+        alert('Have to specify file name!');
+        recording = !recording;
+        return;
+      }
+
       document.getElementById("record").value = "Stop Session";
       document.getElementById("record").style.backgroundColor = "rgba(255, 0, 0, .4)";
       document.getElementById("first-name").disabled = true;
       document.getElementById("last-name").disabled = true;
       document.getElementById("age").disabled = true;
       document.getElementById("gender").disabled = true;
+      document.getElementById("file").disabled = true;
+
+      fileOutput = $("#first-name").val() + "|" + $("#last-name").val() + "|" + $("#age").val() + "|" + $("#gender").val() + "|"
 
       $("#calibrate").show()
       startCalibrating()
 
     } else {
+      var prefix = $("#file").val()
+      var zip = new JSZip();
+      zip.file(prefix + ".raw.txt", fileOutput);
+      zip.generateAsync({type:"blob"})
+      .then(function(content) {
+          // see FileSaver.js
+          saveAs(content, prefix + ".zip");
+      });
+
       document.getElementById("record").value = "Start Session";
       document.getElementById("record").style.backgroundColor = "rgba(0, 0, 0, .1)";
       document.getElementById("first-name").disabled = false;
       document.getElementById("last-name").disabled = false;
       document.getElementById("age").disabled = false;
       document.getElementById("gender").disabled = false;
+      document.getElementById("file").disabled = false;
 
       $("#calibrate").hide()
       if (calibrateTimer) {
@@ -310,22 +337,7 @@ $(function(){
       if (countdownTimer) {
         clearTimeout(countdownTimer)
       }
-
-      //window.open('/?file=' + $("#file").val(), "_blank")
-      //$("#file").val($("#file").val() + ".1")
     }
-    var firstName = document.getElementById("first-name").value;
-    var lastName = document.getElementById("last-name").value;
-    var age = document.getElementById("age").value;
-    var gender = document.getElementById("gender").value;
-    data = {
-      'recording': recording ? "start" : "stop",
-      'firstName': firstName,
-      'secondName': lastName,
-      'age': age,
-      'gender': gender,
-    }
-    //socket.emit("user", data);
   });
 
       //....
@@ -421,7 +433,10 @@ $(function(){
       .ease(d3.easeLinear)
       .attr("x1",-1)
       .attr("x2",-1);
-    //socket.emit("event", "wakeup");
+
+    if (recording) {
+      fileOutput += "EVENT,wakeup|"
+    }
   })
 
   function tick() {
