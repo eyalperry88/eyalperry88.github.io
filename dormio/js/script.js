@@ -66,7 +66,6 @@ function connectDeviceAndCacheCharacteristics() {
  * listener has been added. */
 function handleBatteryLevelChanged(event) {
   let val = event.target.value.getUint8(0);
-  log('> ' + val);
 
   //newData = new Uint32Array(data);
   oldHr = hr ;
