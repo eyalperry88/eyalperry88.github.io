@@ -260,7 +260,7 @@ function endCalibrating() {
 }
 
 var recording = false;
-var inSession = false;
+var isConnected = false;
 $(function(){
   $("#bluetooth_help").hide()
   $("#session_buttons").hide()
