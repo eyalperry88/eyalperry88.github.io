@@ -77,7 +77,7 @@ function handleBatteryLevelChanged(event) {
   if (buffer.length > 600) {
     buffer.shift();
   }
-  bigBuffer.push(newData)
+  bigBuffer.push([flex, hr, eda])
   if (bigBuffer.length > 1800) {
     bigBuffer.shift();
   }
