@@ -1,0 +1,116 @@
+\centered Restricted Stock Unit Award Agreement 
+
+\centered 2010 Long-term Incentive Plan Award 
+
+Throughout this Award Agreement we sometimes refer to [[Organization 1 Name]] and its subsidiaries as “we” or “us.” 
+
+^Award of Restricted Stock Units 
+
+On [[Date 1: Date]] (the “Date of Grant”), the Compensation Committee of the Board of Directors of [[Organization 1 Name]] (the “Compensation Committee”) granted you an Award of [number] Restricted Stock Units (RSUs) under the terms of the [[Organization 1 Name]] 2007 Omnibus Incentive Plan (the “Plan”). Subject to the restrictions and conditions of the Plan and this Award Agreement, including the Performance Adjustment described below, each RSU represents the right for you to receive from us one share of Common Stock on the Vesting Date and to dividends as described below. Your right to receive shares of Common Stock underlying the RSUs is a contractual right between you and us and does not give you a preferred claim to any particular assets or shares of [[Organization 1 Name]]. 
+
+^Performance Adjustment 
+
+Your RSUs are allocated equally among three annual performance periods (2010, 2011 and 2012) for which annual financial objective(s) are determined by the Compensation Committee at the beginning of each applicable performance period. Subject to the discretion of the Compensation Committee, the number of RSUs allocable to each annual performance period will be adjusted as soon as reasonably practicable following each annual performance period by multiplying that number by a payout percentage ([[Percentage 1: Number]]% or [[Percentage 2: Number]]%) based on achievement of that annual performance period’s objective(s, as weighted) and the 162(m) objective (the “Performance Adjustment”). Any such adjusted number of RSUs for an annual performance period combined with remaining annual performance period allocation(s), as may be further adjusted pursuant to Section 10 of this Award Agreement below, are your “Outstanding RSUs.” 
+
+^Restriction Period 
+
+Subject to the terms and conditions of this Award Agreement, including the Performance Adjustment, your Outstanding RSUs vest [[Percentage 2]]% on the third anniversary of the Date of Grant (or the date of the final annual performance period adjustment if later), or the date vesting is accelerated as described in paragraph 5 below if earlier (the “Vesting Date”), conditioned upon you continuously serving as our employee through that Vesting Date other than as provided in paragraph 4 below. 
+
+^Forfeiture of RSUs; Continued Vesting 
+
+You will forfeit unvested Outstanding RSUs as of your Separation from Service (unless vesting of your Outstanding RSUs accelerates under paragraph 5). If your Separation from Service is on or after the later of your 65th birthday and the second anniversary of the Date of Grant, the continuation of employment requirement in paragraph 3 shall not apply and your Outstanding RSUs allocable to the final performance period shall be prorated based on your Separation from Service date. 
+
+Separation from Service is defined in the Plan. Generally, it means the date of your termination of employment with us. 
+
+2010 LTIP Performance RSU Award Agreement  Nextel 
+
+^Acceleration of Vesting 
+
+Unvested Outstanding RSUs may vest before the time at which they would normally become vested  that is, the vesting of Outstanding RSUs may accelerate. Accelerated vesting occurs under the following circumstances: 
+
+***Event***      \centered ***Condition for acceleration***      \centered ***Effective date of acceleration***
+Death      If you die.      Death.
+
+Disability      If you have a Separation from Service under circumstances that make you eligible for benefits under the company’s long-term disability plan.      Your Separation from Service (or after the Six-Month Payment Delay if you are a “specified employee” subject to this delay).
+
+Involuntary Termination without Cause or Resignation with Good Reason      If you have a Separation from Service under circumstances that you are entitled to receive severance benefits under Section 9(b) of your employment agreement.      Your Separation from Service (or after the Six-Month Payment Delay if you are a “specified employee” subject to this delay) , conditioned on your delivering a release to the Company as described in Section 9(b) of your employment agreement.
+
+Six-Month Payment Delay is defined in the Plan to mean the required delay in payment to a Participant who is a “specified employee” of amounts subject to paragraph 409A of the Internal Revenue Code (the “Code”) that are paid upon Separation from Service. 
+
+^Dividends 
+
+If cash dividends are paid on the Common Stock underlying RSUs you hold on the dividend record date, as determined retrospectively after the final Performance Adjustment, you will receive a cash payment equal to the amount of the dividend that would be paid on such Common Stock as soon as practicable after the Delivery Date but in no event later than 45 days after such date. 
+
+If non-cash dividends are paid on the Common Stock underlying your Outstanding RSUs, the Compensation Committee, in its sole discretion, may (1) adjust the RSUs as described in paragraph 10 of this Award Agreement or, (2) provide for distribution of the property distributed in the non-cash dividend. If the Compensation Committee provides for distribution of the non-cash dividend, and you hold the RSUs on the dividend record date, your vesting and delivery dates for the property distributed on the Common Stock underlying your adjusted RSUs will be the same as those dates for the RSUs. 
+
+Page 2 of 5 
+
+2010 LTIP Performance RSU Award Agreement  Nextel 
+
+^Delivery Date; Market Value Per Share 
+
+The Delivery Date (the date as of which we distribute the Common Stock underlying the Outstanding RSUs to you) is the Vesting Date, or the day after the Six-Month Payment Delay if that delay applies to your RSUs. We calculate your taxable income on the Delivery Date using the Market Value Per Share on the immediately preceding trading day, but we use the average of the high and low reported prices of our Common Stock instead of the closing price. We will distribute the Common Stock underlying the Outstanding RSUs, as soon as practicable after the Delivery Date, but in no event later than 45 days after the Delivery Date. 
+
+^Transfer of your RSUs and Designation of Beneficiaries 
+
+Your RSUs represent a contract between [[Organization 1 Name]] and you, and your rights under the contract are not assignable to any other party during your lifetime. Upon your death, shares of Common Stock underlying your RSUs will be delivered in accordance with the terms of the Award to any beneficiaries you name in a beneficiary designation or, if you make no designation, to your estate. 
+
+^Plan Terms 
+
+All capitalized terms used in this Award Agreement that are not defined in this Award Agreement have the same meaning as those terms have in the Plan. The terms of the Plan are hereby incorporated by this reference. The Plan is available online at http://iconnect.corp.sprint.com/portal/iland/?dochome=iw&docpath=IntranetDirectory/LandingPage/20080605_1650_10367056#LTI. 
+
+^Adjustment 
+
+In the event of any change in the number or kind of outstanding shares of our Common Stock by reason of a recapitalization, merger, consolidation, spin-off, reorganization, separation, liquidation, stock split, stock dividend, combination of shares or any other change in our corporate structure or shares of our Common Stock, an appropriate adjustment will be made consistent with applicable provisions of the Code and applicable Treasury Department rulings and regulations in the number and kind of shares subject to outstanding Awards and any other adjustments as the Board deems appropriate. 
+
+Page 3 of 5 
+
+2010 LTIP Performance RSU Award Agreement  Nextel 
+
+^Amendment; Discretionary Nature of Plan 
+
+This Award Agreement is subject to the terms of the Plan, as may be amended from time to time, except that the Award which is the subject of this Award Agreement may not be materially impaired by any amendment or termination of the Plan approved after the Date of Grant without your written consent. You acknowledge and agree that the Plan is discretionary in nature and may be amended, cancelled, or terminated by us, in our sole discretion, at any time. The grant of RSUs under the Plan is a one-time benefit and does not create any contractual or other right to receive a grant of RSUs, other types of grants under the Plan, or benefits in lieu of such grants in the future. Future grants, if any, will be at the sole discretion of the Company, including, but not limited to, the timing of any grant, the number of RSUs granted, the payment of dividend equivalents, and vesting provisions. 
+
+^Data Privacy 
+
+[[12. Data Privacy Signatory Email: Identity | Signature]]
+__________________________________________
+{{12. Data Privacy Entity => By: [[12. Data Privacy Signatory First Name]] [[12. Data Privacy Signatory Last Name]]
+Title: [[12. Data Privacy Signatory Title]]}}
+
+^Governing Law 
+
+This Award Agreement will be governed by the laws of the State of Kansas. No shares of Common Stock will be delivered to you upon the vesting of the RSUs unless counsel for the Company is satisfied that such delivery will be in compliance with all applicable laws. 
+
+^Severability 
+
+The various provisions of this Award Agreement are severable, and any determination of invalidity or unenforceability of any one provision shall have no effect on the remaining provisions. 
+
+^Taxes 
+
+You are liable for any and all taxes, including withholding taxes, arising out of this grant or the issuance of the Common Stock on vesting of RSUs. The Company is authorized to deduct the amount of the tax withholding from the amount payable to you upon settlement of the RSUs. We will withhold from the total number of shares of Common Stock you are to receive the value equal to the amount necessary to satisfy any such withholding obligation at the minimum applicable withholding rate. In addition, if you become subject to FICA or Medicare tax, but you are not yet entitled to delivery of the shares of Common Stock underlying the RSUs, you hereby authorize us to withhold the resulting FICA or Medicare tax from other income payable to you. 
+
+Page 4 of 5 
+
+2010 LTIP Performance RSU Award Agreement  Nextel 
+
+^Entire Agreement 
+
+You hereby acknowledge that you have read the 2007 Omnibus Incentive Plan Information Statement dated [[Date 2: Date]] (the “Information Statement”) available on line at
+http://iconnect.corp.sprint.com/portal/iland/?dochome=iw&docpath=IntranetDirectory/LandingPage/20080605_1650_10367056#LTI.
+To the extent not inconsistent with the provisions of this Award Agreement, the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement, along with the Information Statement and the Plan, contain the entire understanding of the parties.
+
+
+
+[[To the extent not inconsistent with the provisions of this Award Agreement the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement along with the Information Statement and the Plan contain the entire understanding of the parties. Signatory Email: Identity | Signature]]
+__________________________________________
+{{To the extent not inconsistent with the provisions of this Award Agreement the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement along with the Information Statement and the Plan contain the entire understanding of the parties. Entity => By: [[To the extent not inconsistent with the provisions of this Award Agreement the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement along with the Information Statement and the Plan contain the entire understanding of the parties. Signatory First Name]] [[To the extent not inconsistent with the provisions of this Award Agreement the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement along with the Information Statement and the Plan contain the entire understanding of the parties. Signatory Last Name]]
+Title: [[To the extent not inconsistent with the provisions of this Award Agreement the terms of the Information Statement and the Plan are hereby incorporated by reference. This Award Agreement along with the Information Statement and the Plan contain the entire understanding of the parties. Signatory Title]]}}
+
+[Employee]
+
+\centered *This document constitutes part of a prospectus covering securities that have been* 
+
+\centered *registered under the Securities Act of 1933* 
+
+Page 5 of 5
