@@ -50,7 +50,7 @@ function connectDeviceAndCacheCharacteristics() {
   .then(server => {
     log('Getting Dormio Service...');
     return server.getPrimaryService(0x2220);
-  })
+  }, () => {log("device.gatt.connect() promise rejected!");})
   .then(service => {
     log('Getting Data Characteristic...');
     return service.getCharacteristic(0x2221);
