@@ -33,6 +33,7 @@ function requestDevice() {
        "services": [0x2220]
      }]})
   .then(device => {
+    log("Connected with: ",device.name);
     bluetoothDevice = device;
     bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
   });
@@ -40,6 +41,7 @@ function requestDevice() {
 
 function connectDeviceAndCacheCharacteristics() {
   if (bluetoothDevice.gatt.connected && dataCharacteristic) {
+    log("Bluetooth device already connected and dataCharacteristic already defined");
     return Promise.resolve();
   }
 
