@@ -73,9 +73,9 @@ function handleBatteryLevelChanged(event) {
   console.log("Vals are", val1, val2, val3);
   //newData = new Uint32Array(data);
   oldHr = hr ;
-  flex = val + 200 + Math.floor(Math.random() * 50); //newData[0];
-  hr = val + 100 + Math.floor(Math.random() * 50); //newData[1];
-  eda = val + 0 + Math.floor(Math.random() * 50); //newData[2];
+  flex = val1 + 200 + Math.floor(Math.random() * 50); //newData[0];
+  hr = val2 + 100 + Math.floor(Math.random() * 50); //newData[1];
+  eda = val3 + 0 + Math.floor(Math.random() * 50); //newData[2];
   buffer.push(hr);
   if (buffer.length > 600) {
     buffer.shift();
