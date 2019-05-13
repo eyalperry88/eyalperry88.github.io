@@ -70,12 +70,12 @@ function handleBatteryLevelChanged(event) {
   let val1 = event.target.value.getUint8(0);
   let val2 = event.target.value.getUint8(1);
   let val3 = event.target.value.getUint8(2);
-  console.log("Vals are", val1, val2, val3);
-  //newData = new Uint32Array(data);
+  //console.log("Vals are", val1, val2, val3);
+
   oldHr = hr ;
-  flex = val1 + 200 + Math.floor(Math.random() * 50); //newData[0];
-  hr = val2 + 100 + Math.floor(Math.random() * 50); //newData[1];
-  eda = val3 + 0 + Math.floor(Math.random() * 50); //newData[2];
+  flex = val1; // + 200 + Math.floor(Math.random() * 50);
+  hr = val2; // + 100 + Math.floor(Math.random() * 50);
+  eda = val3; // + 0 + Math.floor(Math.random() * 50);
   buffer.push(hr);
   if (buffer.length > 600) {
     buffer.shift();
@@ -158,6 +158,13 @@ var fileOutput = "";
 var meanEDA = null;
 var meanFlex = null;
 var meanHR = null;
+
+var defaults = {
+  "time-until-sleep": 600,
+  "hypna-latency" : 30,
+  "loops" : 3,
+  "calibration-time" : 180
+}
 
 var num_threads = 2;
 var MT = new Multithread(num_threads);
@@ -265,8 +272,12 @@ function endCalibrating() {
 var recording = false;
 var isConnected = false;
 $(function(){
-  $("#bluetooth_help").hide()
-  $("#session_buttons").hide()
+  $("#bluetooth_help").hide();
+  $("#session_buttons").hide();
+
+  for (var key in defaults){
+    $("#" + key).val(defaults[key]);
+  }
 
   document.querySelector('#connect').addEventListener('click', function() {
     if (isWebBluetoothEnabled()) {
@@ -467,7 +478,7 @@ $(function(){
   }
 });
 
-var simulating = false;
+var simulateTimer = null;
 document.addEventListener('keydown', function (event) {
   if (event.defaultPrevented) {
     return;
@@ -476,6 +487,21 @@ document.addEventListener('keydown', function (event) {
   var key = event.key || event.keyCode;
 
   if (key === '`' || key === 'Backquote' || key === 192) {
-    //socket.emit("simulate");
+    if (simulateTimer) {
+      clearInterval(simulateTimer);
+      simulateTimer = null;
+    } else {
+      simulateTimer = setInterval(function() {
+        var arrayBuffer = new ArrayBuffer(3);
+        var dataView = new DataView(arrayBuffer);
+        dataView.setUint8(0, 200 + Math.floor(Math.random() * 50));
+        dataView.setUint8(1, 100 + Math.floor(Math.random() * 50));
+        dataView.setUint8(2, Math.floor(Math.random() * 50));
+        var event = { 'target' : {
+          'value' : dataView
+        }}
+        handleBatteryLevelChanged(event);
+      }, 50);
+    }
   }
 });

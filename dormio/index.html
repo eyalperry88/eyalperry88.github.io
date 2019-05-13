@@ -18,29 +18,32 @@
   <div id="title">openSleep</div>
   <img src="img/zzz.svg" id="zzz">
   <div id="user">
-    <div id="user-first-name" class="user-elem">
-      <div class="user-label">First Name</div>
-      <input type="text" name="first_name" id="first-name">
+    <div id="user-dream-subject" class="user-elem">
+      <div class="user-label">Dream Subject</div>
+      <input type="text" name="dream_subject" id="dream-subject">
     </div>
-    <div id="user-last-name" class="user-elem">
-      <div class="user-label">Last Name</div>
-      <input type="text" name="last_name" id="last-name">
+    <div id="user-time-until-sleep" class="user-elem">
+      <div class="user-label">Time Until Sleep</div>
+      <input type="text" name="time_until_sleep" id="time-until-sleep">
+      <span class="user-label">sec</span>
     </div>
-    <div id="user-age" class="user-elem">
-      <div class="user-label">Age</div>
-      <input type="text" name="age" id="age">
-    </div>
-    <div id="user-gender" class="user-elem">
-      <div class="user-label">Gender</div>
-      <select id="gender">
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="undefined" selected>Undefined</option>
+    <div id="user-hypna-depth" class="user-elem">
+      <div class="user-label">Hypnagogic Depth</div>
+      <select id="hypna-depth">
+        <option value="light">Light</option>
+        <option value="medium">Medium</option>
+        <option value="deep" selected>Deep</option>
       </select>
+      <input type="text" name="hypna_latency" id="hypna-latency">
     </div>
-    <div id="user-file" class="user-elem">
-      <div class="user-label">File Name</div>
-      <input type="text" name="file" id="file">
+    <div id="user-loops" class="user-elem">
+      <div class="user-label">Number of Dreams</div>
+      <input type="text" name="loops" id="loops">
+    </div>
+    <div id="user-calibration-time" class="user-elem">
+      <div class="user-label">Calibration Time</div>
+      <input type="text" name="calibration_time" id="calibration-time">
+      <span class="user-label">sec</span>
     </div>
   </div>
   <div id="channels">
