@@ -1,4 +1,6 @@
-log = console.log
+log = function(str) {
+  console.log('[' + new Date().toUTCString() + '] ' + str);
+}
 
 function isWebBluetoothEnabled() {
   if (navigator.bluetooth) {
@@ -159,11 +161,21 @@ var meanEDA = null;
 var meanFlex = null;
 var meanHR = null;
 
+var nextWakeupTimer = null;
+var wakeups = 0;
+
+var hypnaDepth = {
+  'light' : 30,
+  'medium' : 60,
+  'deep' : 90
+}
 var defaults = {
   "time-until-sleep": 600,
-  "hypna-latency" : 30,
+  "time-between-sleep" : 340,
+  "hypna-latency" : hypnaDepth['light'],
   "loops" : 3,
-  "calibration-time" : 180
+  "calibration-time" : 180,
+  "recording-time" : 30
 }
 
 var num_threads = 2;
@@ -194,6 +206,36 @@ function setBPM(_bpm) {
   }
 }
 
+function startWakeup() {
+  $("#wakeup").css("background-color", "rgba(0, 255, 0, .4)")
+
+  wakeups += 1;
+  log("startWakeup #" + wakeups + "/" + $("#loops").val())
+
+  if (recording) {
+    fileOutput += "EVENT,wakeup|"
+  }
+
+  // play audio and then
+  // record dream
+
+  nextWakeupTimer = setTimeout(function() {
+    endWakeup();
+  }, parseInt($("#recording-time").val()) * 1000);
+}
+
+function endWakeup() {
+  $("#wakeup").css("background-color", "rgba(0, 0, 0, .1)")
+
+  log("endWakeup #" + wakeups + "/" + $("#loops").val())
+
+  if (wakeups < parseInt($("#loops").val())) {
+    nextWakeupTimer = setTimeout(function() {
+      startWakeup();
+    }, parseInt($("#time-between-sleep").val()) * 1000);
+  }
+}
+
 var calibrateTimer = null;
 var countdown = 0;
 var countdownTimer = null;
@@ -202,26 +244,28 @@ function startCalibrating() {
     fileOutput += "EVENT,calibrate_start|"
   }
 
+  log("startCalibrating");
+
   bigBuffer = [];
   bpmBuffer = [];
   meanEDA = null;
   meanFlex = null;
   meanHR = null;
 
-  $("#calibrate").prop("value", "Calibrating... (3:00)")
+  $("#calibrate").html("Calibrating... (3:00)")
   $("#calibrate").css("background-color", "rgba(255, 0, 0, .4)")
 
   calibrationStatus = "CALIBRATING";
 
+  countdown = parseInt($('#calibration-time').val());
   calibrateTimer = setTimeout(function() {
     endCalibrating();
-  }, 180000)
-  countdown = 180;
+  }, countdown * 1000)
   countdownTimer = setInterval(function() {
     countdown--;
     var minutes = Math.floor(countdown / 60)
     var seconds = Math.floor(countdown % 60)
-    $("#calibrate").prop("value", "Calibrating... (" + minutes + ":" + ("0"+seconds).slice(-2) + ")")
+    $("#calibrate").html("Calibrating... (" + minutes + ":" + ("0"+seconds).slice(-2) + ")")
     updateMeans();
     if (countdown <= 0) {
       clearInterval(countdownTimer)
@@ -251,13 +295,15 @@ function updateMeans() {
 function endCalibrating() {
   updateMeans();
 
+  log("endCalibrating");
+
   if (recording) {
     fileOutput += "EVENT,calibrate_end," + meanFlex + "," + meanHR + "," + meanEDA + "|"
   }
 
   calibrationStatus = "CALIBRATED"
 
-  $("#calibrate").prop("value", "Calibrated");
+  $("#calibrate").html("Calibrated");
   $("#calibrate").css("background-color", "rgba(0, 255, 0, .4)");
   if (calibrateTimer) {
     clearTimeout(calibrateTimer)
@@ -273,7 +319,11 @@ var recording = false;
 var isConnected = false;
 $(function(){
   $("#bluetooth_help").hide();
-  $("#session_buttons").hide();
+  //$("#session_buttons").hide();
+
+  $("#hypna-depth").change(function() {
+    $("#hypna-latency").val(hypnaDepth[this.value]);
+  })
 
   for (var key in defaults){
     $("#" + key).val(defaults[key]);
@@ -284,11 +334,11 @@ $(function(){
       if (isConnected) {
         onResetButtonClick();
         $('#connect').val("Connect")
-        $("#session_buttons").hide()
+        //$("#session_buttons").hide()
       } else {
         onReadBatteryLevelButtonClick();
         $('#connect').val("Reset")
-        $("#session_buttons").show()
+        //$("#session_buttons").show()
       }
       isConnected = !isConnected
     }
@@ -303,31 +353,41 @@ $(function(){
     }
   })
 
-  $("#record").click(function(){
+  $("#start_timer").click(function(){
     recording = !recording;
     if (recording) {
-
-      if ($.trim($("#file").val()) == '') {
-        alert('Have to specify file name!');
+      if ($.trim($("#dream-subject").val()) == '') {
+        alert('Have to fill Dream Subject!');
         recording = !recording;
         return;
       }
 
-      document.getElementById("record").value = "Stop Session";
-      document.getElementById("record").style.backgroundColor = "rgba(255, 0, 0, .4)";
-      document.getElementById("first-name").disabled = true;
-      document.getElementById("last-name").disabled = true;
-      document.getElementById("age").disabled = true;
-      document.getElementById("gender").disabled = true;
-      document.getElementById("file").disabled = true;
+      for (var key in defaults) {
+        if (isNaN(+($("#" + key).val()))) {
+          alert('Have to fill a valid ' + key);
+          recording = !recording;
+          return;
+        }
+        $("#" + key).prop('disabled', true);
+      }
 
-      fileOutput = $("#first-name").val() + "|" + $("#last-name").val() + "|" + $("#age").val() + "|" + $("#gender").val() + "|"
+      document.getElementById("start_timer").innerHTML = "Stop Session";
+      document.getElementById("start_timer").style.backgroundColor = "rgba(255, 0, 0, .4)";
+
+      //fileOutput = $("#first-name").val() + "|" + $("#last-name").val() + "|" + $("#age").val() + "|" + $("#gender").val() + "|"
+      fileOutput = $("#dream-subject").val() + "||||"
+
+      log("Start Session");
 
       $("#calibrate").show()
       startCalibrating()
 
+      nextWakeupTimer = setTimeout(function() {
+        startWakeup();
+      }, parseInt($("#time-until-sleep").val()) * 1000);
+
     } else {
-      var prefix = $("#file").val()
+      var prefix = $("#dream-subject").val()
       var zip = new JSZip();
       zip.file(prefix + ".raw.txt", fileOutput);
       zip.generateAsync({type:"blob"})
@@ -336,13 +396,13 @@ $(function(){
           saveAs(content, prefix + ".zip");
       });
 
-      document.getElementById("record").value = "Start Session";
-      document.getElementById("record").style.backgroundColor = "rgba(0, 0, 0, .1)";
-      document.getElementById("first-name").disabled = false;
-      document.getElementById("last-name").disabled = false;
-      document.getElementById("age").disabled = false;
-      document.getElementById("gender").disabled = false;
-      document.getElementById("file").disabled = false;
+      log("End Session");
+
+      document.getElementById("start_timer").innerHTML = "Start Timer Session";
+      document.getElementById("start_timer").style.backgroundColor = "rgba(0, 0, 0, .1)";
+      for (var key in defaults) {
+        $("#" + key).prop('disabled', false);
+      }
 
       $("#calibrate").hide()
       if (calibrateTimer) {
@@ -351,7 +411,14 @@ $(function(){
       if (countdownTimer) {
         clearTimeout(countdownTimer)
       }
+      if (nextWakeupTimer) {
+        clearTimeout(nextWakeupTimer)
+      }
     }
+  });
+
+  $("#start_biosignal").click(function() {
+    alert("Not Yet Supported!")
   });
 
       //....
@@ -448,9 +515,7 @@ $(function(){
       .attr("x1",-1)
       .attr("x2",-1);
 
-    if (recording) {
-      fileOutput += "EVENT,wakeup|"
-    }
+    startWakeup();
   })
 
   function tick() {

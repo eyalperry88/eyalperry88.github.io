@@ -23,16 +23,19 @@
       <input type="text" name="dream_subject" id="dream-subject">
     </div>
     <div id="user-time-until-sleep" class="user-elem">
-      <div class="user-label">Time Until Sleep</div>
+      <div class="user-label">Time Until Sleep (s)</div>
       <input type="text" name="time_until_sleep" id="time-until-sleep">
-      <span class="user-label">sec</span>
+    </div>
+    <div id="user-time-betweeb-sleep" class="user-elem">
+      <div class="user-label">Time Between Sleeps (s)</div>
+      <input type="text" name="time_between_sleep" id="time-between-sleep">
     </div>
     <div id="user-hypna-depth" class="user-elem">
       <div class="user-label">Hypnagogic Depth</div>
       <select id="hypna-depth">
-        <option value="light">Light</option>
+        <option value="light" selected>Light</option>
         <option value="medium">Medium</option>
-        <option value="deep" selected>Deep</option>
+        <option value="deep">Deep</option>
       </select>
       <input type="text" name="hypna_latency" id="hypna-latency">
     </div>
@@ -41,11 +44,15 @@
       <input type="text" name="loops" id="loops">
     </div>
     <div id="user-calibration-time" class="user-elem">
-      <div class="user-label">Calibration Time</div>
+      <div class="user-label">Calibration Time (s)</div>
       <input type="text" name="calibration_time" id="calibration-time">
-      <span class="user-label">sec</span>
+    </div>
+    <div id="user-recording-time" class="user-elem">
+      <div class="user-label">Recording Time (s)</div>
+      <input type="text" name="recording_time" id="recording-time">
     </div>
   </div>
+</div>
   <div id="channels">
     <div id="channel-bpm" class="channel">
       <div class="channel-name">BPM</div>
@@ -63,11 +70,12 @@
   <svg width="1200" height="500" id="plot"></svg>
   <div id="buttons">
     <div id="bluetooth_help">To enable Web Bluetooth API, copy <b>chrome://flags/#enable-experimental-web-platform-features</b> to your Chrome address bar</div>
-    <input type="submit" value="Connect" id="connect">
+    <button id="connect">Connect</button>
     <span id="session_buttons">
-      <input type="submit" value="Start Session" id="record">
-      <input type="submit" value="Calibrating..." id="calibrate">
-      <input type="submit" value="Wakeup" id="wakeup">
+      <button id="start_timer">Start Timer Session</button>
+      <button id="start_biosignal">Start Biosignal Session</button>
+      <button id="calibrate">Calibrating...</button>
+      <button id="wakeup">Wakeup</button>
     </span>
   </div>
 

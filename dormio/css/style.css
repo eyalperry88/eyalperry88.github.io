@@ -132,8 +132,8 @@ body {
   width: calc(100% - 200px);
   text-align:center;
 }
-#buttons input[type=submit] {
-    width: 170px;
+#buttons button {
+    width: 200px;
     height: 50px;
     margin: 5px 15px;
     padding:5px 15px;
@@ -146,7 +146,7 @@ body {
     font-weight: bold;
     font-family: 'Roboto', sans-serif;
 }
-#buttons input[type=submit]:hover {
+#buttons button:hover {
     background:rgba(0, 0, 0, .3);
 }
 
@@ -171,7 +171,7 @@ body {
   margin-bottom: 10px;
 }
 
-.user-elem:nth-child(3n) {
+.user-elem:nth-child(5n) {
   clear: left;
 }
 .user-label {
