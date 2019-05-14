@@ -51,6 +51,10 @@
       <div class="user-label">Recording Time (s)</div>
       <input type="text" name="recording_time" id="recording-time">
     </div>
+    <div class="user-elem">
+        <div class="user-label">Wakeup Message</div>
+      <input type="submit" name="record_message" id="record-message" value="Record">
+    </div>
   </div>
 </div>
   <div id="channels">
@@ -66,14 +70,19 @@
       <div class="channel-name">EDA</div>
       <div id="eda" class="channel-value">0</div>
     </div>
+    <div class="buttons">
+      <button id="connect" style="width:170px">Connect</button>
+    </div>
   </div>
   <svg width="1200" height="500" id="plot"></svg>
-  <div id="buttons">
+  <div class="buttons">
     <div id="bluetooth_help">To enable Web Bluetooth API, copy <b>chrome://flags/#enable-experimental-web-platform-features</b> to your Chrome address bar</div>
-    <button id="connect">Connect</button>
-    <span id="session_buttons">
+    <span id="start_buttons">
       <button id="start_timer">Start Timer Session</button>
       <button id="start_biosignal">Start Biosignal Session</button>
+    </span>
+    <span id="session_buttons">
+      <button id="stop_session" style="background:rgba(255, 0, 0, .4);">Stop Session</button>
       <button id="calibrate">Calibrating...</button>
       <button id="wakeup">Wakeup</button>
     </span>

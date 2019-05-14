@@ -127,12 +127,12 @@ body {
   height: 600px;
 }
 
-#buttons {
+.buttons {
   margin-top: 50px;
   width: calc(100% - 200px);
   text-align:center;
 }
-#buttons button {
+.buttons button {
     width: 200px;
     height: 50px;
     margin: 5px 15px;
@@ -146,7 +146,7 @@ body {
     font-weight: bold;
     font-family: 'Roboto', sans-serif;
 }
-#buttons button:hover {
+.buttons button:hover {
     background:rgba(0, 0, 0, .3);
 }
 
@@ -179,11 +179,10 @@ body {
 }
 
 input {
-  width: 120px;
+  width: 140px;
 }
-
 select {
-  width: 80px;
+  width: 100px;
 }
 #hypna-latency {
   width:36px;

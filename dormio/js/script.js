@@ -216,8 +216,7 @@ function startWakeup() {
     fileOutput += "EVENT,wakeup|"
   }
 
-  // play audio and then
-  // record dream
+  // TODO: play pre-recorded message and then record dream
 
   nextWakeupTimer = setTimeout(function() {
     endWakeup();
@@ -319,7 +318,7 @@ var recording = false;
 var isConnected = false;
 $(function(){
   $("#bluetooth_help").hide();
-  //$("#session_buttons").hide();
+  $("#session_buttons").hide();
 
   $("#hypna-depth").change(function() {
     $("#hypna-latency").val(hypnaDepth[this.value]);
@@ -329,7 +328,11 @@ $(function(){
     $("#" + key).val(defaults[key]);
   }
 
-  document.querySelector('#connect').addEventListener('click', function() {
+  $("#record-message").click(function() {
+    // TODO: record a wakeup message and save it
+  })
+
+  $('#connect').click(function() {
     if (isWebBluetoothEnabled()) {
       if (isConnected) {
         onResetButtonClick();
@@ -354,66 +357,71 @@ $(function(){
   })
 
   $("#start_timer").click(function(){
-    recording = !recording;
-    if (recording) {
-      if ($.trim($("#dream-subject").val()) == '') {
-        alert('Have to fill Dream Subject!');
+    // Validations
+    if ($.trim($("#dream-subject").val()) == '') {
+      alert('Have to fill Dream Subject!');
+      recording = !recording;
+      return;
+    }
+    for (var key in defaults) {
+      if (isNaN(+($("#" + key).val()))) {
+        alert('Have to fill a valid ' + key);
         recording = !recording;
         return;
       }
+    }
 
-      for (var key in defaults) {
-        if (isNaN(+($("#" + key).val()))) {
-          alert('Have to fill a valid ' + key);
-          recording = !recording;
-          return;
-        }
-        $("#" + key).prop('disabled', true);
-      }
+    for (var key in defaults) {
+      $("#" + key).prop('disabled', true);
+    }
 
-      document.getElementById("start_timer").innerHTML = "Stop Session";
-      document.getElementById("start_timer").style.backgroundColor = "rgba(255, 0, 0, .4)";
+    $("#start_buttons").hide();
+    $("#session_buttons").show();
 
-      //fileOutput = $("#first-name").val() + "|" + $("#last-name").val() + "|" + $("#age").val() + "|" + $("#gender").val() + "|"
-      fileOutput = $("#dream-subject").val() + "||||"
+    recording = true;
 
-      log("Start Session");
+    //fileOutput = $("#first-name").val() + "|" + $("#last-name").val() + "|" + $("#age").val() + "|" + $("#gender").val() + "|"
+    fileOutput = $("#dream-subject").val() + "||||"
 
-      $("#calibrate").show()
-      startCalibrating()
+    log("Start Session");
 
-      nextWakeupTimer = setTimeout(function() {
-        startWakeup();
-      }, parseInt($("#time-until-sleep").val()) * 1000);
+    $("#calibrate").show()
+    startCalibrating()
 
-    } else {
-      var prefix = $("#dream-subject").val()
-      var zip = new JSZip();
-      zip.file(prefix + ".raw.txt", fileOutput);
-      zip.generateAsync({type:"blob"})
-      .then(function(content) {
-          // see FileSaver.js
-          saveAs(content, prefix + ".zip");
-      });
+    nextWakeupTimer = setTimeout(function() {
+      startWakeup();
+    }, parseInt($("#time-until-sleep").val()) * 1000);
+  });
 
-      log("End Session");
+  $("#stop_session").click(function(){
+    $("#session_buttons").hide();
+    $("#start_buttons").show();
+    recording = false;
 
-      document.getElementById("start_timer").innerHTML = "Start Timer Session";
-      document.getElementById("start_timer").style.backgroundColor = "rgba(0, 0, 0, .1)";
-      for (var key in defaults) {
-        $("#" + key).prop('disabled', false);
-      }
+    var prefix = $("#dream-subject").val()
+    var zip = new JSZip();
+    zip.file(prefix + ".raw.txt", fileOutput);
+    zip.generateAsync({type:"blob"})
+    .then(function(content) {
+        // see FileSaver.js
+        saveAs(content, prefix + ".zip");
+    });
 
-      $("#calibrate").hide()
-      if (calibrateTimer) {
-        clearTimeout(calibrateTimer)
-      }
-      if (countdownTimer) {
-        clearTimeout(countdownTimer)
-      }
-      if (nextWakeupTimer) {
-        clearTimeout(nextWakeupTimer)
-      }
+    log("End Session");
+
+    for (var key in defaults) {
+      $("#" + key).prop('disabled', false);
+    }
+
+    $("#calibrate").hide()
+    if (calibrateTimer) {
+      clearTimeout(calibrateTimer)
+    }
+    if (countdownTimer) {
+      clearTimeout(countdownTimer)
+    }
+    if (nextWakeupTimer) {
+      clearTimeout(nextWakeupTimer)
     }
   });
 
