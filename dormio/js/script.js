@@ -371,6 +371,7 @@ $(function(){
       }
     }
 
+    $("#dream-subject").prop('disabled', true);
     for (var key in defaults) {
       $("#" + key).prop('disabled', true);
     }
@@ -409,6 +410,7 @@ $(function(){
 
     log("End Session");
 
+    $("#dream-subject").prop('disabled', false);
     for (var key in defaults) {
       $("#" + key).prop('disabled', false);
     }
