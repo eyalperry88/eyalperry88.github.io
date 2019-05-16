@@ -316,6 +316,12 @@ function endCalibrating() {
 
 var recording = false;
 var isConnected = false;
+
+var audioJSZip = new JSZip();
+var audioZip = audioJSZip.folder("audioRecordings")
+var wakeup_msg_recording;
+var audio_recordings = []
+
 $(function(){
   $("#bluetooth_help").hide();
   $("#session_buttons").hide();
@@ -330,6 +336,9 @@ $(function(){
 
   $("#record-message").click(function() {
     // TODO: record a wakeup message and save it
+
+    startRecording(true)
+
   })
 
   $('#connect').click(function() {
@@ -580,3 +589,83 @@ document.addEventListener('keydown', function (event) {
     }
   }
 });
+
+
+var gumStream; //stream from getUserMedia() 
+
+var recorder; //WebAudioRecorder object 
+
+var input; //MediaStreamAudioSourceNode we'll be recording var encodingType; 
+
+var encodeAfterRecord = true; // waits until recording is finished before encoding to mp3
+
+var audioContext;//new audio context to help us record 
+
+function startRecording(isWakeup) {
+
+  var constraints = {
+      audio: true,
+      video: false
+  }
+
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+   
+   audioContext  = new AudioContext;
+   
+   gumStream = stream;
+   /* use the stream */
+   input = audioContext.createMediaStreamSource(stream);
+   //stop the input from playing back through the speakers 
+   //input.connect(audioContext.destination) //get the encoding 
+   //disable the encoding selector 
+   recorder = new WebAudioRecorder(input, {
+       workerDir: "js/",
+       encoding: "mp3",
+   });
+
+   recorder.setOptions({
+      timeLimit: 480,
+      encodeAfterRecord: encodeAfterRecord,
+      ogg: {
+          quality: 0.5
+      },
+      mp3: {
+          bitRate: 160
+      }
+  });
+
+
+   recorder.onComplete = function(recorder, blob) {
+      audioRecording = createDownloadLink(blob, recorder.encoding);
+
+      if(isWakeup) {
+        new Audio(audioRecording.url).play()
+      }
+  }
+  
+
+  }).catch(function(err) {
+  console.log("error", err);
+  });
+}
+
+function stopRecording() {
+    console.log("stopRecording() called");
+    //stop microphone access 
+    gumStream.getAudioTracks()[0].stop();
+    //tell the recorder to finish the recording (stop recording + encode the recorded audio) 
+    recorder.finishRecording();
+}
+
+function createDownloadLink(blob, encoding, isWakeup) {
+    var url = URL.createObjectURL(blob);
+
+    audioZip.file(link.download, blob);
+    audioRecording = {"blob":blob, "encoding": encoding, "filename":link.download, "url":url}
+    return audioRecording;
+}
+
+//Plays the sound
+function play(url) {
+  new Audio(url).play();
+}
