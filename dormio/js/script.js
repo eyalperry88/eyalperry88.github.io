@@ -418,13 +418,12 @@ $(function(){
     var zip = new JSZip();
     var audioZipFolder = zip.folder("audioRecordings")
     zip.file(prefix + ".raw.txt", fileOutput);
-    zip.generateAsync({type:"blob"})
 
     audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
     for (var audioRec in audio_recordings) {
       audioZipFolder.file(audioRec.filename, audioRec.blob)
     }
-
+    zip.generateAsync({type:"blob"})
     .then(function(content) {
         // see FileSaver.js
         saveAs(content, prefix + ".zip");
