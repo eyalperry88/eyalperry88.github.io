@@ -218,6 +218,13 @@ function startWakeup() {
 
   // TODO: play pre-recorded message and then record dream
 
+  if(wakeup_msg_recording != null){
+      wakeup_msg_player = new Audio(wakeup_msg_recording.url)
+      wakeup_msg_player.onended = () => {
+          startRecording(new Date().toISOString() + '.mp3', false);
+      }
+  }
+
   nextWakeupTimer = setTimeout(function() {
     endWakeup();
   }, parseInt($("#recording-time").val()) * 1000);
@@ -317,8 +324,6 @@ function endCalibrating() {
 var recording = false;
 var isConnected = false;
 
-var audioJSZip = new JSZip();
-var audioZip = audioJSZip.folder("audioRecordings")
 var wakeup_msg_recording;
 var audio_recordings = []
 
@@ -337,7 +342,8 @@ $(function(){
   $("#record-message").click(function() {
     // TODO: record a wakeup message and save it
 
-    startRecording(true)
+    startRecording("wakeup.mp3", true)
+
 
   })
 
@@ -410,8 +416,15 @@ $(function(){
 
     var prefix = $("#dream-subject").val()
     var zip = new JSZip();
+    var audioZipFolder = zip.folder("audioRecordings")
     zip.file(prefix + ".raw.txt", fileOutput);
     zip.generateAsync({type:"blob"})
+
+    audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
+    for (var audioRec in audio_recordings) {
+      audioZipFolder.file(audioRec.filename, audioRec.blob)
+    }
+
     .then(function(content) {
         // see FileSaver.js
         saveAs(content, prefix + ".zip");
@@ -601,7 +614,7 @@ var encodeAfterRecord = true; // waits until recording is finished before encodi
 
 var audioContext;//new audio context to help us record 
 
-function startRecording(isWakeup) {
+function startRecording(filename, isWakeup) {
 
   var constraints = {
       audio: true,
@@ -635,11 +648,14 @@ function startRecording(isWakeup) {
   });
 
 
-   recorder.onComplete = function(recorder, blob) {
-      audioRecording = createDownloadLink(blob, recorder.encoding);
+   recorder.onComplete = function(recorder, blob, filename) {
+      audioRecording = getAudio(blob, recorder.encoding);
 
       if(isWakeup) {
+        wakeup_msg_recording = audioRecording
         new Audio(audioRecording.url).play()
+      } else {
+        audio_recordings.push(audioRecording);
       }
   }
   
@@ -657,11 +673,11 @@ function stopRecording() {
     recorder.finishRecording();
 }
 
-function createDownloadLink(blob, encoding, isWakeup) {
+function getAudio(blob, encoding, filename) {
     var url = URL.createObjectURL(blob);
 
-    audioZip.file(link.download, blob);
-    audioRecording = {"blob":blob, "encoding": encoding, "filename":link.download, "url":url}
+    // audioZip.file(filename, blob);
+    audioRecording = {"blob":blob, "encoding": encoding, "filename":filename, "url":url}
     return audioRecording;
 }
 
