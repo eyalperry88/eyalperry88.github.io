@@ -672,7 +672,6 @@ function startRecording(filename, isWakeup) {
         console.log("wakeup_msg_recordin is now: ", wakeup_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
-        new Audio(audioRecording.url).play()
         audio_recordings.push(audioRecording);
       }
   }
