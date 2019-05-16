@@ -220,8 +220,9 @@ function startWakeup() {
 
   if(wakeup_msg_recording != null){
       wakeup_msg_player = new Audio(wakeup_msg_recording.url)
+      wakeup_msg_player.play()
       wakeup_msg_player.onended = () => {
-          startRecording(new Date().toISOString() + '.mp3', false);
+          startRecording("dream_"+wakeups+"_"+new Date().toISOString() + '.mp3', false);
       }
   }
 
@@ -234,7 +235,7 @@ function endWakeup() {
   $("#wakeup").css("background-color", "rgba(0, 0, 0, .1)")
 
   log("endWakeup #" + wakeups + "/" + $("#loops").val())
-
+  stopRecording();
   if (wakeups < parseInt($("#loops").val())) {
     nextWakeupTimer = setTimeout(function() {
       startWakeup();
@@ -327,6 +328,8 @@ var isConnected = false;
 var wakeup_msg_recording;
 var audio_recordings = []
 
+var is_recording_wake = false;
+
 $(function(){
   $("#bluetooth_help").hide();
   $("#session_buttons").hide();
@@ -341,8 +344,17 @@ $(function(){
 
   $("#record-message").click(function() {
     // TODO: record a wakeup message and save it
+    if(!is_recording_wake) {
+      console.log("starting to record wake message")
+      $('#record-message').val("Stop")
+      startRecording("wakeup.mp3", true)
+      is_recording_wake = true;
+    } else {
+      $('#record-message').val("Record")
+      stopRecording("wakeup.mp3", true)
+      is_recording_wake = false;
+    }
 
-    startRecording("wakeup.mp3", true)
 
 
   })
@@ -372,6 +384,9 @@ $(function(){
   })
 
   $("#start_timer").click(function(){
+
+    dream_number = 0;
+
     // Validations
     if ($.trim($("#dream-subject").val()) == '') {
       alert('Have to fill Dream Subject!');
@@ -420,7 +435,8 @@ $(function(){
     zip.file(prefix + ".raw.txt", fileOutput);
 
     audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
-    for (var audioRec in audio_recordings) {
+    for (var audioRec of audio_recordings) {
+      console.log("zipping: ",audioRec)
       audioZipFolder.file(audioRec.filename, audioRec.blob)
     }
     zip.generateAsync({type:"blob"})
@@ -449,6 +465,7 @@ $(function(){
   });
 
   $("#start_biosignal").click(function() {
+    dream_number = 0
     alert("Not Yet Supported!")
   });
 
@@ -621,7 +638,6 @@ function startRecording(filename, isWakeup) {
   }
 
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-   
    audioContext  = new AudioContext;
    
    gumStream = stream;
@@ -647,34 +663,38 @@ function startRecording(filename, isWakeup) {
   });
 
 
-   recorder.onComplete = function(recorder, blob, filename) {
-      audioRecording = getAudio(blob, recorder.encoding);
+   recorder.onComplete = function(recorder, blob) {
+      console.log("Recording.oncCmplete called")
+      audioRecording = getAudio(blob, recorder.encoding, filename);
 
       if(isWakeup) {
         wakeup_msg_recording = audioRecording
+        console.log("wakeup_msg_recordin is now: ", wakeup_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
+        new Audio(audioRecording.url).play()
         audio_recordings.push(audioRecording);
       }
   }
-  
-
+      recorder.startRecording();
+  console.log("Audio Recording Started");
   }).catch(function(err) {
   console.log("error", err);
   });
 }
 
 function stopRecording() {
-    console.log("stopRecording() called");
     //stop microphone access 
     gumStream.getAudioTracks()[0].stop();
     //tell the recorder to finish the recording (stop recording + encode the recorded audio) 
     recorder.finishRecording();
+
+    console.log("Audio Recording Stopped");
 }
 
 function getAudio(blob, encoding, filename) {
     var url = URL.createObjectURL(blob);
-
+    console.log("filename is:", filename )
     // audioZip.file(filename, blob);
     audioRecording = {"blob":blob, "encoding": encoding, "filename":filename, "url":url}
     return audioRecording;
