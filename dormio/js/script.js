@@ -69,15 +69,15 @@ function connectDeviceAndCacheCharacteristics() {
  * characteristic value changes since `characteristicvaluechanged` event
  * listener has been added. */
 function handleBatteryLevelChanged(event) {
-  let val1 = event.target.value.getUint8(0);
-  let val2 = event.target.value.getUint8(1);
-  let val3 = event.target.value.getUint8(2);
+  let valEDA = event.target.value.getUint32(0);
+  let valHR = event.target.value.getUint32(4);
+  let valFLEX = event.target.value.getUint32(8);
   //console.log("Vals are", val1, val2, val3);
 
   oldHr = hr ;
-  flex = val1; // + 200 + Math.floor(Math.random() * 50);
-  hr = val2; // + 100 + Math.floor(Math.random() * 50);
-  eda = val3; // + 0 + Math.floor(Math.random() * 50);
+  flex = valFLEX; // + 200 + Math.floor(Math.random() * 50);
+  hr = valHR; // + 100 + Math.floor(Math.random() * 50);
+  eda = valEDA; // + 0 + Math.floor(Math.random() * 50);
   buffer.push(hr);
   if (buffer.length > 600) {
     buffer.shift();
