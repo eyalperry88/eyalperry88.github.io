@@ -206,7 +206,20 @@ function setBPM(_bpm) {
 }
 
 function startWakeup() {
-  $("#wakeup").css("background-color", "rgba(0, 255, 0, .4)")
+  $("#wakeup").css("background-color", "rgba(0, 255, 0, .4)");
+  g.append("g")
+    .attr("clip-path", "url(#clip)")
+  .append("line")
+    .attr("x1", width)
+    .attr("y1", 0)
+    .attr("x2", width)
+    .attr("y2", height)
+    .attr("class", "line-wakeup")
+  .transition()
+    .duration(6650)
+    .ease(d3.easeLinear)
+    .attr("x1",-1)
+    .attr("x2",-1);
 
   wakeups += 1;
   log("startWakeup #" + wakeups + "/" + $("#loops").val())
@@ -250,7 +263,7 @@ function endWakeup() {
 
     nextWakeupTimer = setTimeout(function() {
       endSession();
-    }, 1000);
+    }, 4000);
   }
 }
 
@@ -377,6 +390,8 @@ function endSession() {
     clearTimeout(nextWakeupTimer)
   }
 }
+
+var g;
 
 var recording = false;
 var isConnected = false;
@@ -514,8 +529,9 @@ $(function(){
       width = parseInt(svg.style("width").slice(0, -2));
       width = width  - margin.left - margin.right,
       height = parseInt(svg.style("height").slice(0, -2));
-      height = height - margin.top - margin.bottom,
-      g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      height = height - margin.top - margin.bottom;
+
+  g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   var x = d3.scaleLinear()
     .domain([0, n - 1])
@@ -584,20 +600,6 @@ $(function(){
     .on("start", tick);
 
   $("#wakeup").click(function() {
-    g.append("g")
-      .attr("clip-path", "url(#clip)")
-    .append("line")
-      .attr("x1", width)
-      .attr("y1", 0)
-      .attr("x2", width)
-      .attr("y2", height)
-      .attr("class", "line-wakeup")
-    .transition()
-      .duration(6650)
-      .ease(d3.easeLinear)
-      .attr("x1",-1)
-      .attr("x2",-1);
-
     startWakeup();
   })
 
@@ -711,6 +713,7 @@ function startRecording(filename, mode = "dream") {
         console.log("sleep_msg_recording is now: ", sleep_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
+        console.log("pushed new dream recording: ", audioRecording)
         audio_recordings.push(audioRecording);
       }
   }
