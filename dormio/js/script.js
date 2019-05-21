@@ -72,8 +72,7 @@ function handleBatteryLevelChanged(event) {
   let valEDA = event.target.value.getInt32(0);
   let valHR = event.target.value.getInt32(4);
   let valFLEX = event.target.value.getInt32(8);
-  //console.log("Vals are", val1, val2, val3);
-  console.log("Vals are", valEDA, valHR, valFLEX)
+  //console.log("Vals are", valEDA, valHR, valFLEX)
   oldHr = hr ;
   flex = valFLEX; // + 200 + Math.floor(Math.random() * 50);
   hr = valHR; // + 100 + Math.floor(Math.random() * 50);
@@ -235,11 +234,18 @@ function endWakeup() {
   $("#wakeup").css("background-color", "rgba(0, 0, 0, .1)")
 
   log("endWakeup #" + wakeups + "/" + $("#loops").val())
-  stopRecording();
+  if (wakeup_msg_recording) {
+    stopRecording();
+  }
   if (wakeups < parseInt($("#loops").val())) {
     nextWakeupTimer = setTimeout(function() {
       startWakeup();
     }, parseInt($("#time-between-sleep").val()) * 1000);
+  } else {
+    gongs = 0;
+    gong.play();
+
+    endSession();
   }
 }
 
@@ -322,6 +328,48 @@ function endCalibrating() {
   }
 }
 
+function endSession() {
+  $("#session_buttons").hide();
+  $("#start_buttons").show();
+  recording = false;
+
+  var prefix = $("#dream-subject").val()
+  var zip = new JSZip();
+  var audioZipFolder = zip.folder("audioRecordings")
+  zip.file(prefix + ".raw.txt", fileOutput);
+
+  if (wakeup_msg_recording) {
+    audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
+    for (var audioRec of audio_recordings) {
+      console.log("zipping: ",audioRec)
+      audioZipFolder.file(audioRec.filename, audioRec.blob)
+    }
+  }
+  zip.generateAsync({type:"blob"})
+  .then(function(content) {
+      // see FileSaver.js
+      saveAs(content, prefix + ".zip");
+  });
+
+  log("End Session");
+
+  $("#dream-subject").prop('disabled', false);
+  for (var key in defaults) {
+    $("#" + key).prop('disabled', false);
+  }
+
+  $("#calibrate").hide()
+  if (calibrateTimer) {
+    clearTimeout(calibrateTimer)
+  }
+  if (countdownTimer) {
+    clearTimeout(countdownTimer)
+  }
+  if (nextWakeupTimer) {
+    clearTimeout(nextWakeupTimer)
+  }
+}
+
 var recording = false;
 var isConnected = false;
 
@@ -329,6 +377,15 @@ var wakeup_msg_recording;
 var audio_recordings = []
 
 var is_recording_wake = false;
+
+var gongs = 0;
+var gong = new Audio('audio/gong.wav');
+gong.addEventListener('ended',function() {
+  gongs += 1;
+  if (gongs < 3) {
+    gong.play()
+  }
+})
 
 $(function(){
   $("#bluetooth_help").hide();
@@ -425,43 +482,7 @@ $(function(){
   });
 
   $("#stop_session").click(function(){
-    $("#session_buttons").hide();
-    $("#start_buttons").show();
-    recording = false;
-
-    var prefix = $("#dream-subject").val()
-    var zip = new JSZip();
-    var audioZipFolder = zip.folder("audioRecordings")
-    zip.file(prefix + ".raw.txt", fileOutput);
-
-    audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
-    for (var audioRec of audio_recordings) {
-      console.log("zipping: ",audioRec)
-      audioZipFolder.file(audioRec.filename, audioRec.blob)
-    }
-    zip.generateAsync({type:"blob"})
-    .then(function(content) {
-        // see FileSaver.js
-        saveAs(content, prefix + ".zip");
-    });
-
-    log("End Session");
-
-    $("#dream-subject").prop('disabled', false);
-    for (var key in defaults) {
-      $("#" + key).prop('disabled', false);
-    }
-
-    $("#calibrate").hide()
-    if (calibrateTimer) {
-      clearTimeout(calibrateTimer)
-    }
-    if (countdownTimer) {
-      clearTimeout(countdownTimer)
-    }
-    if (nextWakeupTimer) {
-      clearTimeout(nextWakeupTimer)
-    }
+    endSession();
   });
 
   $("#start_biosignal").click(function() {
@@ -605,11 +626,11 @@ document.addEventListener('keydown', function (event) {
       simulateTimer = null;
     } else {
       simulateTimer = setInterval(function() {
-        var arrayBuffer = new ArrayBuffer(3);
+        var arrayBuffer = new ArrayBuffer(12);
         var dataView = new DataView(arrayBuffer);
-        dataView.setUint8(0, 200 + Math.floor(Math.random() * 50));
-        dataView.setUint8(1, 100 + Math.floor(Math.random() * 50));
-        dataView.setUint8(2, Math.floor(Math.random() * 50));
+        dataView.setUint32(0, 200 + Math.floor(Math.random() * 50));
+        dataView.setUint32(4, 100 + Math.floor(Math.random() * 50));
+        dataView.setUint32(8, Math.floor(Math.random() * 50));
         var event = { 'target' : {
           'value' : dataView
         }}
@@ -620,15 +641,15 @@ document.addEventListener('keydown', function (event) {
 });
 
 
-var gumStream; //stream from getUserMedia() 
+var gumStream; //stream from getUserMedia()
 
-var recorder; //WebAudioRecorder object 
+var recorder; //WebAudioRecorder object
 
-var input; //MediaStreamAudioSourceNode we'll be recording var encodingType; 
+var input; //MediaStreamAudioSourceNode we'll be recording var encodingType;
 
 var encodeAfterRecord = true; // waits until recording is finished before encoding to mp3
 
-var audioContext;//new audio context to help us record 
+var audioContext;//new audio context to help us record
 
 function startRecording(filename, isWakeup) {
 
@@ -639,13 +660,13 @@ function startRecording(filename, isWakeup) {
 
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
    audioContext  = new AudioContext;
-   
+
    gumStream = stream;
    /* use the stream */
    input = audioContext.createMediaStreamSource(stream);
-   //stop the input from playing back through the speakers 
-   //input.connect(audioContext.destination) //get the encoding 
-   //disable the encoding selector 
+   //stop the input from playing back through the speakers
+   //input.connect(audioContext.destination) //get the encoding
+   //disable the encoding selector
    recorder = new WebAudioRecorder(input, {
        workerDir: "js/",
        encoding: "mp3",
@@ -683,9 +704,9 @@ function startRecording(filename, isWakeup) {
 }
 
 function stopRecording() {
-    //stop microphone access 
+    //stop microphone access
     gumStream.getAudioTracks()[0].stop();
-    //tell the recorder to finish the recording (stop recording + encode the recorded audio) 
+    //tell the recorder to finish the recording (stop recording + encode the recorded audio)
     recorder.finishRecording();
 
     console.log("Audio Recording Stopped");
