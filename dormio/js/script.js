@@ -391,7 +391,7 @@ function endSession() {
   }
 }
 
-var g;
+var g, width, height;
 
 var recording = false;
 var isConnected = false;
@@ -525,12 +525,12 @@ $(function(){
       dataHR = d3.range(n).map(() => {return 0;});
       dataEDA = d3.range(n).map(() => {return 0;});
   var svg = d3.select("#plot"),
-      margin = {top: 20, right: 20, bottom: 20, left: 40},
-      width = parseInt(svg.style("width").slice(0, -2));
-      width = width  - margin.left - margin.right,
-      height = parseInt(svg.style("height").slice(0, -2));
-      height = height - margin.top - margin.bottom;
+      margin = {top: 20, right: 20, bottom: 20, left: 40};
 
+  width = parseInt(svg.style("width").slice(0, -2));
+  width = width  - margin.left - margin.right;
+  height = parseInt(svg.style("height").slice(0, -2));
+  height = height - margin.top - margin.bottom;
   g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   var x = d3.scaleLinear()
