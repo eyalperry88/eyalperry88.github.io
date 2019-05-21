@@ -215,13 +215,11 @@ function startWakeup() {
     fileOutput += "EVENT,wakeup|"
   }
 
-  // TODO: play pre-recorded message and then record dream
-
   if(wakeup_msg_recording != null){
       wakeup_msg_player = new Audio(wakeup_msg_recording.url)
       wakeup_msg_player.play()
       wakeup_msg_player.onended = () => {
-          startRecording("dream_"+wakeups+"_"+new Date().toISOString() + '.mp3', false);
+          startRecording("dream_"+wakeups+"_"+new Date().toISOString() + '.mp3', "dream");
       }
   }
 
@@ -238,6 +236,11 @@ function endWakeup() {
     stopRecording();
   }
   if (wakeups < parseInt($("#loops").val())) {
+    if (sleep_msg_recording != null) {
+      sleep_msg_player = new Audio(sleep_msg_recording.url)
+      sleep_msg_player.play()
+    }
+
     nextWakeupTimer = setTimeout(function() {
       startWakeup();
     }, parseInt($("#time-between-sleep").val()) * 1000);
@@ -245,7 +248,9 @@ function endWakeup() {
     gongs = 0;
     gong.play();
 
-    endSession();
+    nextWakeupTimer = setTimeout(function() {
+      endSession();
+    }, 1000);
   }
 }
 
@@ -340,10 +345,13 @@ function endSession() {
 
   if (wakeup_msg_recording) {
     audioZipFolder.file(wakeup_msg_recording.filename, wakeup_msg_recording.blob)
-    for (var audioRec of audio_recordings) {
-      console.log("zipping: ",audioRec)
-      audioZipFolder.file(audioRec.filename, audioRec.blob)
-    }
+  }
+  if (sleep_msg_recording) {
+    audioZipFolder.file(sleep_msg_recording.filename, sleep_msg_recording.blob)
+  }
+  for (var audioRec of audio_recordings) {
+    console.log("zipping: ",audioRec)
+    audioZipFolder.file(audioRec.filename, audioRec.blob)
   }
   zip.generateAsync({type:"blob"})
   .then(function(content) {
@@ -373,10 +381,11 @@ function endSession() {
 var recording = false;
 var isConnected = false;
 
-var wakeup_msg_recording;
+var wakeup_msg_recording, sleep_msg_recording;
 var audio_recordings = []
 
 var is_recording_wake = false;
+var is_recording_sleep = false;
 
 var gongs = 0;
 var gong = new Audio('audio/gong.wav');
@@ -399,22 +408,31 @@ $(function(){
     $("#" + key).val(defaults[key]);
   }
 
-  $("#record-message").click(function() {
-    // TODO: record a wakeup message and save it
+  $("#record-wakeup-message").click(function() {
     if(!is_recording_wake) {
       console.log("starting to record wake message")
-      $('#record-message').val("Stop")
-      startRecording("wakeup.mp3", true)
+      $('#record-wakeup-message').val("Stop")
+      startRecording("wakeup.mp3", "wakeup")
       is_recording_wake = true;
     } else {
-      $('#record-message').val("Record")
-      stopRecording("wakeup.mp3", true)
+      $('#record-wakeup-message').val("Record")
+      stopRecording()
       is_recording_wake = false;
     }
+  });
 
-
-
-  })
+  $("#record-sleep-message").click(function() {
+    if(!is_recording_sleep) {
+      console.log("starting to record sleep message")
+      $('#record-sleep-message').val("Stop")
+      startRecording("sleep.mp3", "sleep")
+      is_recording_sleep = true;
+    } else {
+      $('#record-sleep-message').val("Record")
+      stopRecording()
+      is_recording_sleep = false;
+    }
+  });
 
   $('#connect').click(function() {
     if (isWebBluetoothEnabled()) {
@@ -441,9 +459,6 @@ $(function(){
   })
 
   $("#start_timer").click(function(){
-
-    dream_number = 0;
-
     // Validations
     if ($.trim($("#dream-subject").val()) == '') {
       alert('Have to fill Dream Subject!');
@@ -486,7 +501,6 @@ $(function(){
   });
 
   $("#start_biosignal").click(function() {
-    dream_number = 0
     alert("Not Yet Supported!")
   });
 
@@ -651,7 +665,7 @@ var encodeAfterRecord = true; // waits until recording is finished before encodi
 
 var audioContext;//new audio context to help us record
 
-function startRecording(filename, isWakeup) {
+function startRecording(filename, mode = "dream") {
 
   var constraints = {
       audio: true,
@@ -688,9 +702,13 @@ function startRecording(filename, isWakeup) {
       console.log("Recording.oncCmplete called")
       audioRecording = getAudio(blob, recorder.encoding, filename);
 
-      if(isWakeup) {
+      if (mode == "wakeup") {
         wakeup_msg_recording = audioRecording
         console.log("wakeup_msg_recordin is now: ", wakeup_msg_recording)
+        new Audio(audioRecording.url).play()
+      } else if (mode == "sleep") {
+        sleep_msg_recording = audioRecording
+        console.log("sleep_msg_recording is now: ", sleep_msg_recording)
         new Audio(audioRecording.url).play()
       } else {
         audio_recordings.push(audioRecording);
