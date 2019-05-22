@@ -283,7 +283,7 @@ function startCalibrating() {
   meanFlex = null;
   meanHR = null;
 
-  $("#calibrate").html("Calibrating... (3:00)")
+  $("#calibrate").html("Calibrating...")
   $("#calibrate").css("background-color", "rgba(255, 0, 0, .4)")
 
   calibrationStatus = "CALIBRATING";
