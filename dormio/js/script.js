@@ -344,6 +344,11 @@ function endCalibrating() {
     clearTimeout(countdownTimer);
     countdownTimer = null;
   }
+
+  if (sleep_msg_recording != null) {
+    sleep_msg_player = new Audio(sleep_msg_recording.url)
+    sleep_msg_player.play()
+  }
 }
 
 function endSession() {
@@ -503,8 +508,8 @@ $(function(){
 
     log("Start Session");
 
-    $("#calibrate").show()
-    startCalibrating()
+    $("#calibrate").show();
+    startCalibrating();
 
     nextWakeupTimer = setTimeout(function() {
       startWakeup();
