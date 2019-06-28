@@ -32,10 +32,9 @@ function requestDevice() {
   log('Requesting any Bluetooth Device...');
   return navigator.bluetooth.requestDevice({
      "filters": [{
-       //"services": ["44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()] // [0x2220]
-       "name": 'Aidlab'
+       "services": [0x2220]
      }],
-   "optionalServices": ["44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()]})
+  })
   .then(device => {
     log("Connected with: ",device.name);
     bluetoothDevice = device;
@@ -53,11 +52,11 @@ function connectDeviceAndCacheCharacteristics() {
   return bluetoothDevice.gatt.connect()
   .then(server => {
     log('Getting Dormio Service...');
-    return server.getPrimaryService("44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()); //0x2220);
+    return server.getPrimaryService(0x2220);
   }, () => {log("device.gatt.connect() promise rejected!");})
   .then(service => {
     log('Getting Data Characteristic...');
-    return service.getCharacteristic("46366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()); //0x2221);
+    return service.getCharacteristic(0x2221);
   })
   .then(characteristic => {
     dataCharacteristic = characteristic;
@@ -71,17 +70,6 @@ function connectDeviceAndCacheCharacteristics() {
  * characteristic value changes since `characteristicvaluechanged` event
  * listener has been added. */
 function handleBatteryLevelChanged(event) {
-  let value = event.target.value;
-  let a = [];
-  // Convert raw data bytes to hex values just for the sake of showing something.
-  // In the "real" world, you'd use data.getUint8, data.getUint16 or even
-  // TextDecoder to process raw data bytes.
-  for (let i = 0; i < value.byteLength; i++) {
-    a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
-  }
-  log('> ' + a.join(' '));
-  return;
-
   let valEDA = event.target.value.getInt32(0);
   let valHR = event.target.value.getInt32(4);
   let valFLEX = event.target.value.getInt32(8);
