@@ -20,8 +20,8 @@ function onReadBatteryLevelButtonClick() {
   return (bluetoothDevice ? Promise.resolve() : requestDevice())
   .then(connectDeviceAndCacheCharacteristics)
   .then(_ => {
-    log('Reading Dormio Data...');
-    return dataCharacteristic.readValue();
+    //log('Reading Dormio Data...');
+    //return dataCharacteristic.readValue();
   })
   .catch(error => {
     log('Argh! ' + error);
@@ -32,8 +32,10 @@ function requestDevice() {
   log('Requesting any Bluetooth Device...');
   return navigator.bluetooth.requestDevice({
      "filters": [{
-       "services": [0x2220]
-     }]})
+       //"services": ["44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()] // [0x2220]
+       "name": 'Aidlab'
+     }],
+   "optionalServices": ["44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()]})
   .then(device => {
     log("Connected with: ",device.name);
     bluetoothDevice = device;
@@ -51,11 +53,11 @@ function connectDeviceAndCacheCharacteristics() {
   return bluetoothDevice.gatt.connect()
   .then(server => {
     log('Getting Dormio Service...');
-    return server.getPrimaryService(0x2220);
+    return server.getPrimaryService("44366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()); //0x2220);
   }, () => {log("device.gatt.connect() promise rejected!");})
   .then(service => {
     log('Getting Data Characteristic...');
-    return service.getCharacteristic(0x2221);
+    return service.getCharacteristic("46366E80-CF3A-11E1-9AB4-0002A5D5C51B".toLowerCase()); //0x2221);
   })
   .then(characteristic => {
     dataCharacteristic = characteristic;
@@ -72,7 +74,7 @@ function handleBatteryLevelChanged(event) {
   let valEDA = event.target.value.getInt32(0);
   let valHR = event.target.value.getInt32(4);
   let valFLEX = event.target.value.getInt32(8);
-  //console.log("Vals are", valEDA, valHR, valFLEX)
+  console.log("Vals are", valEDA, valHR, valFLEX)
   oldHr = hr ;
   flex = valFLEX; // + 200 + Math.floor(Math.random() * 50);
   hr = valHR; // + 100 + Math.floor(Math.random() * 50);
