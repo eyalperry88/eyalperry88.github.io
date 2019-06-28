@@ -71,10 +71,21 @@ function connectDeviceAndCacheCharacteristics() {
  * characteristic value changes since `characteristicvaluechanged` event
  * listener has been added. */
 function handleBatteryLevelChanged(event) {
+  let value = event.target.value;
+  let a = [];
+  // Convert raw data bytes to hex values just for the sake of showing something.
+  // In the "real" world, you'd use data.getUint8, data.getUint16 or even
+  // TextDecoder to process raw data bytes.
+  for (let i = 0; i < value.byteLength; i++) {
+    a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+  }
+  log('> ' + a.join(' '));
+  return;
+
   let valEDA = event.target.value.getInt32(0);
   let valHR = event.target.value.getInt32(4);
   let valFLEX = event.target.value.getInt32(8);
-  console.log("Vals are", valEDA, valHR, valFLEX)
+  //console.log("Vals are", valEDA, valHR, valFLEX)
   oldHr = hr ;
   flex = valFLEX; // + 200 + Math.floor(Math.random() * 50);
   hr = valHR; // + 100 + Math.floor(Math.random() * 50);
