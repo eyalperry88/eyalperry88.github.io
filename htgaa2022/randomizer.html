@@ -53,7 +53,7 @@ var app = new Vue({
   el: '#app',
   data: {
     trigger: null,
-    list: students.map(name => { return {text: name, color: "#FFFFFFF"}; })
+    list: students.map(name => { return {text: name, color: "#FFFFFFF"}; }).sort(x => 0.5 - Math.random())
   },
   methods: {
     start() {
