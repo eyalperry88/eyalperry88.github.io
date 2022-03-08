@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>HTGAA Name Randomizer</title>
+</head>
+<script>
+var students = [
+ "Ido",
+ "Joris",
+ "Ganit",
+ "Camron",
+ "Miana",
+ "Zoe"
+];
+
+var studentsSelected = [
+  "Ilan",
+  "Jenna",
+  "Amelia",
+  "Hyun",
+  "Rosalie",
+  "Matthew",
+  "Ishraki",
+  "Suvin",
+  "Muqing"
+];
+</script>
+<body>
+<!-- partial:index.partial.html -->
+<center><div id="app">
+    <div>
+        <slot-machine :trigger="trigger" :list="list" width="540" height="150" ></slot-machine>
+    </div>
+    <br/>
+    <div>
+        <button @click="start" style="width: 540px;"><h1>(Almost) Natural Selection</h1></button>
+    </div>
+    <br />
+    <hr/>
+    <div style="margin-top:20px; font-size:18px; width:540px;"><b>Previously Selected:&nbsp;</b><span id="previous"></span></div>
+
+</div>
+
+</center>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js'></script>
+<script src='https://unpkg.com/@puckwang/vue-slot-machine@0.0.7/dist/index.js'></script>
+<script>
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    trigger: null,
+    list: students.map(name => { return {text: name, color: "#FFFFFFF"}; })
+  },
+  methods: {
+    start() {
+        this.trigger = new Date();
+        console.log("Started");
+    }
+  },
+  components: { "slot-machine": VueSlotMachine.SlotMachine }
+})
+
+document.getElementById("previous").innerHTML = studentsSelected.join(", ");
+</script>
+
+</body>
+</html>
