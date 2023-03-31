@@ -3,24 +3,81 @@
   <head>
     <title>99Fridays - Conquered by Clippy</title>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://unpkg.com/xp.css" />
 
     <style>
         body {
             width: 100%;
-            background-image: url('bg.jpg');
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: url('bg.jpg') no-repeat center center fixed; 
             background-size: cover;
+        }
+
+        .clippy {
+          position: absolute;
+          z-index:100002;
+          right: 0;
+          bottom: 0;
+          width: 40%;
+          pointer-events: none;
+        }
+        .window_title {
+          position: relative;
+          margin: 60px auto;
+          width: 700px; 
+          z-index:100001;
+        }
+        .window_escape {
+          position: absolute; 
+          z-index: 100000; 
+          width: 300px;
+        }
+
+        @media only screen and (max-width: 768px) {
+          body {
+              width: 100%;
+              height: 100%;
+              overflow: hidden;
+              margin: 0;
+              padding: 0;
+              background: url('bg.jpg') no-repeat center center fixed; 
+              background-size: cover;
+          }
+          .clippy {
+            position: absolute;
+            z-index:100002;
+            right: 0;
+            bottom: 0;
+            width: 80%;
+            pointer-events: none;
+          }
+          .window_title {
+            position: relative;
+            margin: 10px auto;
+            width: 90%; 
+          }
+          .window_escape {
+            position: absolute; 
+            z-index: 100000; 
+            width: 300px;
+          }
         }
     </style>
 
   </head>
 
   <body>
-    <div class="window" style="position: absolute; top: 100px; right: 100px; width: 500px; z-index:100001;">
+    <img id="clippy" class="clippy" src="clippy.png" />
+
+    <div class="window window_title">
         <div class="title-bar">
           <div class="title-bar-text">
-            Document1 - Microsoft Word
+            Document99 - Microsoft Word
           </div>
   
           <div class="title-bar-controls">
@@ -30,81 +87,87 @@
           </div>
         </div>
         <div class="window-body">
-          <p>99Fridays Presents</p>
-          <p>Conquered by Clippy (WORD ART HERE)</p>
-          <p>Tales of a Degenerative AI</p>
+          <p style="text-align: center;">99Fridays Presents</p>
+          <img src="wordart1.png" style="width:100%" />
+          <p style="text-align: center; font-size:21px; font-weight: bold;">Tales of a Degenerative AI</p>
+          <div style="width: 100%; "><progress value="0.9" style="width:100%"/></div>
         </div>
       </div>
 
-    <div id="source" class="window" style="position: absolute; top: 500px; left: 500px; z-index:10000; width: 300px">
+    <div id="source" class="window window_escape">
       <div class="title-bar">
-        <div class="title-bar-text">
-          
-        </div>
-
         <div class="title-bar-controls">
           <button aria-label="Minimize"></button>
-          <button aria-label="Maximize"></button>
           <button aria-label="Close"></button>
         </div>
       </div>
       <div class="window-body">
         <p>Do you want to escape?</p>
         <section class="field-row" style="justify-content: flex-end">
-          <button>OK</button>
-          <button>Cancel</button>
+          <button onclick="location.href='https://forms.gle/s6VWHni1Se877Uvd8'">OK</button>
+          <button onclick="clippyGrow()">Cancel</button>
         </section>
       </div>
     </div>
   </body>
 
   <script>
-    var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    var clippySize = 40;
+    var clippyBottom = 0;
+
+    console.log(windowWidth, windowHeight);
 
     
-    let window_x = (width - 300) / 2;
-    let window_y = height / 2;
-
-    console.log(window_x, window_y);
+    let popup_x = (windowWidth - 300) / 2;
+    let popup_y = (windowHeight - 100) / 2;
 
     document.addEventListener("DOMContentLoaded", function(event) { 
         let s = document.getElementById("source");
 
-        s.style.left = window_x + "px";
-        s.style.top = window_y + "px";
+        s.style.left = popup_x + "px";
+        s.style.top = popup_y + "px";
     });
 
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
 
+    function clippyGrow() {
+      clippySize += 5;
+      clippyBottom -= 10;
+      let c = document.getElementById("clippy");
+      c.style.width = clippySize + "%";
+      c.style.bottom = clippyBottom + "px";
+    }
+
     
-    var z = 9999;
+    var z = 99999;
     setInterval(function() {
         let s = document.getElementById("source");
         let s_copy = s.cloneNode(true);
 
-        window_x -= 10;
-        window_y -= 10;
+        popup_x -= 12;
+        popup_y -= 12;
 
-        if (window_x < 0 || window_y < 0) {
+        if (popup_x < 0 || popup_y < 0) {
             if (Math.random() > 0.5) {
-                window_x = getRandomInt(width - 300);
-                window_y = height - 100;
+              popup_x = getRandomInt(windowWidth - 300);
+              popup_y = windowHeight - 100;
             } else {
-                window_x = width - 300;
-                window_y = getRandomInt(height - 100);
+              popup_x = windowWidth - 300;
+              popup_y = getRandomInt(windowHeight - 100);
             }
         }
 
-        s_copy.style.left = window_x + "px";
-        s_copy.style.top = window_y + "px";
+        s_copy.style.left = popup_x + "px";
+        s_copy.style.top = popup_y + "px";
         s_copy.style.zIndex = z;
 
         document.body.appendChild(s_copy);
 
         z -= 1;
-    }, 70);
+    }, 100);
 </script>
 </html>
